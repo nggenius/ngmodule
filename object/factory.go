@@ -22,9 +22,9 @@ type FactoryObject interface {
 	SetFactory(f *Factory)
 	SetCore(c service.CoreAPI)
 	Prepare()
-	OnCreate()
-	OnDestroy()
-	OnDelete()
+	Create()
+	Destroy()
+	Delete()
 	Alive() bool
 	SetDelegate(d Delegate)
 }
@@ -82,7 +82,7 @@ func (f *Factory) Create(typ string) (interface{}, error) {
 			o.SetCore(f.owner.Core)
 			o.SetDelegate(f.owner.entitydelegate[typ])
 			o.Prepare()
-			o.OnCreate()
+			o.Create()
 
 			f.owner.Core.LogDebug("create object ", o.ObjId())
 			return inst, nil
@@ -97,7 +97,7 @@ func (f *Factory) Create(typ string) (interface{}, error) {
 func (f *Factory) Destroy(object interface{}) error {
 	if fo, ok := object.(FactoryObject); ok {
 		if fo.Alive() {
-			fo.OnDestroy()
+			fo.Destroy()
 			f.delete.PushBack(object)
 			return f.pool.Remove(fo.Index(), object)
 		}
@@ -110,7 +110,7 @@ func (f *Factory) Destroy(object interface{}) error {
 func (f *Factory) ClearDelete() {
 	for ele := f.delete.Front(); ele != nil; {
 		fo := ele.Value.(FactoryObject)
-		fo.OnDelete()
+		fo.Delete()
 		e := ele
 		ele = ele.Next()
 		f.delete.Remove(e)

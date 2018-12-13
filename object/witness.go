@@ -4,7 +4,6 @@ package object
 // 目击者作为一个事件集散地，对所有的数据变动的事件进行调度。由第三方注册。
 // 目击者不关注变动的细节，只进行转发，由第三方进行细节的处理。
 import (
-	"container/list"
 	"fmt"
 
 	"github.com/nggenius/ngengine/core/rpc"
@@ -53,12 +52,6 @@ type ObjectWitness struct {
 	silence       bool // 沉默状态
 	attrobserver  map[string]attrObserver
 	tableobserver map[string]tableObserver
-
-	locked      bool                    // 是否已加锁
-	lockCount   uint32                  // 加锁计数
-	lockcb      map[uint32]LockCallBack // 回调函数
-	lockerQueue *list.List              // 加锁的队列
-	locker      *Locker                 // 当前上锁的人以及信息
 }
 
 // Factory 获取工厂
@@ -106,8 +99,6 @@ func (o *ObjectWitness) Witness(obj Object) {
 	o.object = obj
 	o.attrobserver = make(map[string]attrObserver)
 	o.tableobserver = make(map[string]tableObserver)
-	o.lockerQueue = list.New()
-	o.lockcb = make(map[uint32]LockCallBack)
 	o.dummys = make(map[rpc.Mailbox]int)
 }
 
