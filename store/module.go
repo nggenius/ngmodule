@@ -100,3 +100,7 @@ func (m *StoreModule) Client() *StoreClient {
 func (m *StoreModule) Register(name string, obj interface{}, objslice interface{}) error {
 	return m.register.Register(name, obj, objslice)
 }
+
+func (m *StoreModule) CreateDBObj(name string) interface{} {
+	return m.register.Create(name)
+}
