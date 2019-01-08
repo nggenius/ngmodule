@@ -52,7 +52,7 @@ func (f *Factory) CreateWithCap(typ string, cap int) (interface{}, error) {
 		return nil, err
 	}
 
-	if c, ok := o.(Container); ok {
+	if c, ok := o.(Object); ok {
 		c.SetCap(cap)
 		return o, nil
 	}
@@ -157,36 +157,36 @@ func (f *Factory) Replicate(object interface{}, dest rpc.Mailbox, tag int, cb Re
 }
 
 func (f *Factory) onReplicate(param interface{}, replyerr *rpc.Error, ar *utils.LoadArchive) {
-	if param == nil {
-		return
-	}
+	// if param == nil {
+	// 	return
+	// }
 
-	args := param.([]interface{})
-	cb := args[0].(ReplicateCB)
-	id := args[2].(rpc.Mailbox)
-	o, _ := f.FindObject(id)
-	if o == nil {
-		f.owner.Core.LogErr("object not found")
-		return
-	}
+	// args := param.([]interface{})
+	// cb := args[0].(ReplicateCB)
+	// id := args[2].(rpc.Mailbox)
+	// o, _ := f.FindObject(id)
+	// if o == nil {
+	// 	f.owner.Core.LogErr("object not found")
+	// 	return
+	// }
 
-	if replyerr != nil {
-		if cb != nil {
-			cb(args[1], replyerr)
-		}
-		return
-	}
-	var dummy rpc.Mailbox
-	if err := ar.Read(&dummy); err != nil {
-		if cb != nil {
-			cb(args[1], err)
-		}
-		return
-	}
-	obj := o.(Object)
-	obj.AddDummy(dummy, DUMMY_STATE_READY)
+	// if replyerr != nil {
+	// 	if cb != nil {
+	// 		cb(args[1], replyerr)
+	// 	}
+	// 	return
+	// }
+	// var dummy rpc.Mailbox
+	// if err := ar.Read(&dummy); err != nil {
+	// 	if cb != nil {
+	// 		cb(args[1], err)
+	// 	}
+	// 	return
+	// }
+	// obj := o.(Object)
+	// obj.Witness().AddDummy(dummy, DUMMY_STATE_READY)
 
-	if cb != nil {
-		cb(args[1], nil)
-	}
+	// if cb != nil {
+	// 	cb(args[1], nil)
+	// }
 }

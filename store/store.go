@@ -63,7 +63,7 @@ func (s *Store) Get(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode int32
 	m := protocol.NewMessageReader(msg)
 	typ, _ := m.ReadString()
 	var condition map[string]interface{}
-	if err := m.Read(&condition); err != nil {
+	if err := m.Get(&condition); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 	obj := s.ctx.register.Create(typ)
@@ -102,12 +102,12 @@ func (s *Store) Find(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode int3
 	m := protocol.NewMessageReader(msg)
 	typ, _ := m.ReadString()
 	var condition map[string]interface{}
-	if err := m.Read(&condition); err != nil {
+	if err := m.Get(&condition); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 	var limit, start int
-	m.Read(&limit)
-	m.Read(&start)
+	m.Get(&limit)
+	m.Get(&start)
 	obj := s.ctx.register.CreateSlice(typ)
 	if obj == nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, ErrObject.Error())
@@ -158,7 +158,7 @@ func (s *Store) Insert(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode in
 func (s *Store) MultiInsert(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode int32, reply *protocol.Message) {
 	m := protocol.NewMessageReader(msg)
 	var typ []string
-	if err := m.Read(&typ); err != nil {
+	if err := m.Get(&typ); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 
@@ -191,11 +191,11 @@ func (s *Store) Update(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode in
 	m := protocol.NewMessageReader(msg)
 	typ, _ := m.ReadString()
 	var cols []string
-	if err := m.Read(&cols); err != nil {
+	if err := m.Get(&cols); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 	var condition map[string]interface{}
-	if err := m.Read(&condition); err != nil {
+	if err := m.Get(&condition); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 	obj := s.ctx.register.Create(typ)
@@ -226,7 +226,7 @@ func (s *Store) Update(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode in
 func (s *Store) MultiUpdate(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode int32, reply *protocol.Message) {
 	m := protocol.NewMessageReader(msg)
 	var typ []string
-	if err := m.Read(&typ); err != nil {
+	if err := m.Get(&typ); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 
@@ -302,12 +302,12 @@ func (s *Store) Delete2(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode i
 func (s *Store) Delete3(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode int32, reply *protocol.Message) {
 	m := protocol.NewMessageReader(msg)
 	var typ []string
-	if err := m.Read(&typ); err != nil {
+	if err := m.Get(&typ); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 
 	var ids []int64
-	if err := m.Read(&ids); err != nil {
+	if err := m.Get(&ids); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 
@@ -340,7 +340,7 @@ func (s *Store) Query(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode int
 	m := protocol.NewMessageReader(msg)
 	sql, _ := m.ReadString()
 	var args []interface{}
-	if err := m.Read(&args); err != nil {
+	if err := m.Get(&args); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 
@@ -360,7 +360,7 @@ func (s *Store) Exec(sender, _ rpc.Mailbox, msg *protocol.Message) (errcode int3
 	m := protocol.NewMessageReader(msg)
 	sql, _ := m.ReadString()
 	var args []interface{}
-	if err := m.Read(&args); err != nil {
+	if err := m.Get(&args); err != nil {
 		return protocol.ReplyError(protocol.TINY, share.ERR_ARGS_ERROR, err.Error())
 	}
 	sqlorargs := make([]interface{}, 0, len(args)+1)

@@ -36,7 +36,7 @@ func ParseGetReply(err *rpc.Error, ar *utils.LoadArchive, object interface{}) *r
 	if err != nil && protocol.CheckRpcError(err) {
 		return err
 	}
-	if e := ar.Read(object); e != nil {
+	if e := ar.Get(object); e != nil {
 		return rpc.NewError(share.ERR_ARGS_ERROR, e.Error())
 	}
 
@@ -59,7 +59,7 @@ func ParseFindReply(err *rpc.Error, ar *utils.LoadArchive, object interface{}) *
 		return err
 	}
 
-	if e := ar.Read(object); e != nil {
+	if e := ar.Get(object); e != nil {
 		return rpc.NewError(share.ERR_ARGS_ERROR, e.Error())
 	}
 
@@ -231,7 +231,7 @@ func ParseQueryReply(err *rpc.Error, ar *utils.LoadArchive) (*rpc.Error, []map[s
 	}
 
 	var result []map[string][]byte
-	if e := ar.Read(&result); e != nil {
+	if e := ar.Get(&result); e != nil {
 		return rpc.NewError(share.ERR_ARGS_ERROR, e.Error()), nil
 	}
 	return nil, result

@@ -183,7 +183,7 @@ func (o *ObjectModule) FireObjectEvent(event string, sender rpc.Mailbox, target 
 		return 0, fmt.Errorf("object is nil")
 	}
 
-	typ := tobj.(ObjectCreate).EntityType()
+	typ := tobj.(ObjectCreate).ObjectType()
 	if delegate, has := o.entitydelegate[typ]; has {
 		ret := delegate.Invoke(event, sender, target, args...)
 		return ret, nil
@@ -205,7 +205,7 @@ func (o *ObjectModule) Register(oc ObjectCreate) {
 		panic("object: Register object is nil")
 	}
 
-	name := oc.EntityType()
+	name := oc.ObjectType()
 
 	if name == "" {
 		panic("entity name is empty")
