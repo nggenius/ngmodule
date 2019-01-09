@@ -83,11 +83,11 @@ func ParseInsertReply(err *rpc.Error, ar *utils.LoadArchive) (*rpc.Error, int64,
 		return err, 0, 0
 	}
 
-	affected, e := ar.ReadInt64()
+	affected, e := ar.GetInt64()
 	if e != nil {
 		return rpc.NewError(share.ERR_ARGS_ERROR, e.Error()), 0, 0
 	}
-	id, e := ar.ReadInt64()
+	id, e := ar.GetInt64()
 	if e != nil {
 		return rpc.NewError(share.ERR_ARGS_ERROR, e.Error()), 0, 0
 	}
@@ -141,7 +141,7 @@ func ParseUpdateReply(err *rpc.Error, ar *utils.LoadArchive) (*rpc.Error, int64)
 	if err != nil && protocol.CheckRpcError(err) {
 		return err, 0
 	}
-	affected, e := ar.ReadInt64()
+	affected, e := ar.GetInt64()
 	if e != nil {
 		return rpc.NewError(share.ERR_ARGS_ERROR, e.Error()), 0
 	}
@@ -183,7 +183,7 @@ func ParseDeleteReply(err *rpc.Error, ar *utils.LoadArchive) (*rpc.Error, int64)
 		return err, 0
 	}
 
-	affected, e := ar.ReadInt64()
+	affected, e := ar.GetInt64()
 	if e != nil {
 		return rpc.NewError(share.ERR_ARGS_ERROR, e.Error()), 0
 	}
@@ -253,7 +253,7 @@ func ParseExecReply(err *rpc.Error, ar *utils.LoadArchive) (*rpc.Error, int64) {
 	if err != nil && protocol.CheckRpcError(err) {
 		return err, 0
 	}
-	affected, e := ar.ReadInt64()
+	affected, e := ar.GetInt64()
 	if e != nil {
 		return rpc.NewError(share.ERR_ARGS_ERROR, e.Error()), 0
 	}

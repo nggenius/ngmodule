@@ -11,11 +11,11 @@ import (
 )
 
 type encoder interface {
-	Serialize() ([]byte, error)
+	Serialize(ar *utils.StoreArchive) error
 }
 
 type decoder interface {
-	Deserialize([]byte) error
+	Deserialize(ar *utils.LoadArchive) error
 }
 
 func (f *Factory) Encode(o interface{}) ([]byte, error) {
@@ -25,15 +25,11 @@ func (f *Factory) Encode(o interface{}) ([]byte, error) {
 	ar := utils.NewStoreArchiver(msg.Body)
 	ar.PutString(obj.ObjectType())
 	if enc, ok := o.(encoder); ok {
-		b, err := enc.Serialize()
+		err := enc.Serialize(ar)
 		if err != nil {
 			return nil, err
 		}
 
-		err = ar.PutData(b)
-		if err != nil {
-			return nil, err
-		}
 		return ar.Data(), nil
 	}
 
@@ -48,7 +44,7 @@ func (f *Factory) Encode(o interface{}) ([]byte, error) {
 
 func (f *Factory) Sync(o Object, b []byte) error {
 	ar := utils.NewLoadArchiver(b)
-	typ, err := ar.ReadString()
+	typ, err := ar.GetString()
 	if err != nil {
 		return err
 	}
@@ -58,11 +54,7 @@ func (f *Factory) Sync(o Object, b []byte) error {
 	}
 
 	if dec, ok := o.(decoder); ok {
-		data, err := ar.ReadData()
-		if err != nil {
-			return err
-		}
-		return dec.Deserialize(data)
+		return dec.Deserialize(ar)
 	}
 
 	dec := gob.NewDecoder(ar)
@@ -75,7 +67,7 @@ func (f *Factory) Sync(o Object, b []byte) error {
 
 func (f *Factory) Decode(b []byte) (interface{}, error) {
 	ar := utils.NewLoadArchiver(b)
-	typ, err := ar.ReadString()
+	typ, err := ar.GetString()
 	if err != nil {
 		return nil, err
 	}
@@ -86,12 +78,11 @@ func (f *Factory) Decode(b []byte) (interface{}, error) {
 	}
 
 	if dec, ok := o.(decoder); ok {
-		data, err := ar.ReadData()
-		if err != nil {
+		if err := dec.Deserialize(ar); err != nil {
 			f.Destroy(o)
 			return nil, err
 		}
-		return o, dec.Deserialize(data)
+		return o, nil
 	}
 
 	dec := gob.NewDecoder(ar)
